@@ -37,13 +37,13 @@ class TextProcessor:
         return text.split(' ')
     
     def removeStopWords(self, words):
-        newWords = set()
+        newWords = []
 
         for word in words:
             if word in self.constants.stopWords:
                 continue
             else:
-                newWords.add(word)
+                newWords.append(word)
 
         return newWords
     
@@ -55,6 +55,20 @@ class TextProcessor:
         tokens = self.removeStopWords(words)
 
         return tokens
+
+    def getDigrams(self, text):
+        newText = text
+        newText = self.toLower(newText)
+        newText = self.removePunctuationMarks(newText)
+        words = self.getWords(newText)
+        tokens = self.removeStopWords(words)
+
+        digrams = []
+
+        for i in range(len(tokens) - 1):
+            digrams.append((tokens[i], tokens[i + 1]))
+
+        return digrams
 
     
 class TextComparer:
@@ -111,6 +125,38 @@ class TextComparer:
 
         return TextComparer.cos_sim(vectorText1, vectorText2)
 
+    def compareTextsUsingDigrams(self, text1FilePath, text2FilePath):
+        text1 = self.fileManager.getFileText(text1FilePath)
+        text2 = self.fileManager.getFileText(text2FilePath)
+
+        text1Digrams = self.textProcessor.getDigrams(text1)
+        text2Digrams = self.textProcessor.getDigrams(text2)
+
+        text1DigramSet = set(text1Digrams)
+        text2DigramSet = set(text2Digrams)
+
+        text1DigramSet.update(text2DigramSet)
+        allDigramsSet = text1DigramSet
+
+        dictText1 = {}
+        dictText2 = {}
+
+        # Defining dictionaries with same order of tokens
+        for digram in allDigramsSet:
+            dictText1[digram] = 0
+            dictText2[digram] = 0
+        
+        for digram in text1Digrams:
+            dictText1[digram] += 1
+
+        for digram in text2Digrams:
+            dictText2[digram] += 1
+        
+        vectorText1 = list(dictText1.values())
+        vectorText2 = list(dictText2.values())
+
+        return TextComparer.cos_sim(vectorText1, vectorText2)
+
 def main():
     textComparer = TextComparer('stop-words.txt', 'punctuation-marks.txt')
     fileNames = [
@@ -118,11 +164,11 @@ def main():
         'james-webb-telescope-discoveries-abstract.txt',
         'james-webb-telescope-description-abstract.txt']
 
-    #fileNames = [
-    #    'test1.txt',
-    #    'test2.txt',
-    #    'test3.txt'
-    #]
+    for i in range(len(fileNames)):
+        for j in range(i + 1, len(fileNames)):
+            print(f"Compared texts: \n-> {fileNames[i]}\n-> {fileNames[j]}")
+            similarity = textComparer.compareTextsUsingDigrams(fileNames[i], fileNames[j])
+            print(f"Similarity: {similarity}\n")
 
     for i in range(len(fileNames)):
         for j in range(i + 1, len(fileNames)):
