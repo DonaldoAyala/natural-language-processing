@@ -37,17 +37,6 @@ class SearchEngine:
                     tfidfPerDoc[doc] = 0
         
         print("---RESULTS---")
+        print("query: ", query)
         for doc in tfidfPerDoc:
             print(f"{doc}\tTFIDF: {tfidfPerDoc[doc]}")
-
-                
-
-
-searchEngine = SearchEngine()
-searchEngine.initialize([
-    'infrared-space-observatory-abstract.txt',
-    'james-webb-telescope-description-abstract.txt',
-    'james-webb-telescope-discoveries-abstract.txt',
-    'videogame-text.txt'])
-searchEngine.termDocumentMatrix.printMatrix()
-searchEngine.searchQuery(['astronomical', 'telescope', 'astronomy'])
