@@ -12,7 +12,7 @@ class SearchEngine:
 
     def search(self, string):
         queryWords = string.split(' ')
-        selfsearchQuery(queryWords)
+        self.searchQuery(queryWords)
     
     def searchQuery(self, query):
         noDocs = len(self.fileNames)

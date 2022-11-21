@@ -29,7 +29,10 @@ class TermDocumentMatrix:
 
     def printMatrix(self):
         count = 1
-        print('\t\t', end='')
+        for doc in self.documents:
+            print(f"{count}: {doc}")
+            count += 1
+        count = 1
         for doc in self.documents:
             print(count, '\t', end='')
             count += 1
