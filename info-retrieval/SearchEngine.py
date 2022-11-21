@@ -18,24 +18,27 @@ class SearchEngine:
         noDocs = len(self.fileNames)
         tfidfPerDoc = dict()
         for word in query:
+            matchDocs = self.termDocumentMatrix.getDocumentAppereances(word)
+            wordAppearsInDoc = len(matchDocs)
+            #print(word, " appears in ", wordAppearsInDoc, " document")
             for doc in self.fileNames:
-                matchDocs = self.termDocumentMatrix.getDocumentAppereances(word)
-                wordAppearsInDoc = len(matchDocs)
                 wordOccurrences = 0
                 if (word, doc) in self.termDocumentMatrix.termDocumentMatrix:
                     wordOccurrences = self.termDocumentMatrix.termDocumentMatrix[(word, doc)]
+                #print(word, " appears", wordOccurrences, " times in ", doc)
                 tf = log(1 + wordOccurrences)
                 idf = 0
                 if wordAppearsInDoc > 0:
                     idf = log(noDocs / wordAppearsInDoc)
-
+                #print(f"tf: {tf} idf: {idf} tf*idf: {tf*idf}")
                 tfidf = tf*idf
 
                 if doc in tfidfPerDoc:
                     tfidfPerDoc[doc] += tfidf
                 else:
-                    tfidfPerDoc[doc] = 0
-        
+                    tfidfPerDoc[doc] = tfidf
+
+
         print("---RESULTS---")
         print("query: ", query)
         for doc in tfidfPerDoc:

@@ -1,5 +1,4 @@
 from FileManager import *
-#from TFIDFCalculator import *
 from TextProcessor import *
 
 class TermDocumentMatrix:
